@@ -3,8 +3,11 @@ import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  authDomain: "hack-canada-2026.firebaseapp.com",
+  projectId: "hack-canada-2026",
+  storageBucket: "hack-canada-2026.firebasestorage.app",
+  messagingSenderId: "613364990016",
+  appId: "1:613364990016:web:9a419cbc12b220feaa1fa5"
 };
 
 const app = initializeApp(firebaseConfig);
