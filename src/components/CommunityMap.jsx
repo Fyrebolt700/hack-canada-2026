@@ -300,7 +300,7 @@ return (
         <span>🔵 School</span>
         <span>🟣 Worship</span>
         <span>🟢 Housing</span>
-        <span>⚫ You</span>
+        <span>📍 You</span>
       </div>
 
       <MapFilters
@@ -333,12 +333,20 @@ return (
         center={userLocation}
         zoom={12}
       >
-        <Marker
-          position={userLocation}
-          title="Your Location"
-          icon={getMarkerIcon("black")}
-        />
-
+     <Marker
+  position={userLocation}
+  title="You are here"
+  icon={{
+    url:
+      "data:image/svg+xml;charset=UTF-8," +
+      encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+          <text x="24" y="30" text-anchor="middle" font-size="28">📍</text>
+        </svg>
+      `),
+    scaledSize: new window.google.maps.Size(40, 40),
+  }}
+/>
         {filteredPlaces.map((place) => {
           const lat = place.geometry?.location?.lat();
           const lng = place.geometry?.location?.lng();
