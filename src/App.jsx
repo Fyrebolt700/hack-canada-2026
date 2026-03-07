@@ -1,24 +1,25 @@
-import { Routes, Route } from 'react-router-dom';
-import './App.css'
-import Chatbot from './Chatbot';
-import Checklist from './Checklist';
-import Dashboard from './Dashboard';
-import Map from './Map';
-import Quiz from './Quiz';
-import Login from './login';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AppLayout from "./components/layout/AppLayout";
+import LandingPage from "./pages/LandingPage";
+import DashboardPage from "./pages/DashboardPage";
+import ChecklistPage from "./pages/ChecklistPage";
+import ChatbotPage from "./pages/ChatbotPage";
+import MapPage from "./pages/MapPage";
+import OnboardingPage from "./pages/OnboardingPage";
 
-function App() {
-
+export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Dashboard />} />
-      <Route path="/Login" element={ <Login />} />
-      <Route path="/Chatbot" element={<Chatbot />} />
-      <Route path="/Checklist" element={<Checklist />} />
-      <Route path="/Map" element={<Map />} />
-      <Route path="/Quiz" element={<Quiz />} />
-    </Routes>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/onboarding" element={<OnboardingPage />} />
+        <Route element={<AppLayout />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/checklist" element={<ChecklistPage />} />
+          <Route path="/chatbot" element={<ChatbotPage />} />
+          <Route path="/map" element={<MapPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-export default App
