@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@elevenlabs/elevenlabs-js": "^2.38.1",
+    "@google/generative-ai": "^0.24.1",
+    "firebase": "^12.10.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.1"
