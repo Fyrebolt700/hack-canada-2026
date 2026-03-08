@@ -61,38 +61,61 @@ export default function OnboardingPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-            <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8">
-                <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm text-gray-500">Question {step + 1} of {visibleSteps.length}</span>
-                    <span className="text-sm text-blue-600">{Math.round(progress)}%</span>
+        <div style={{ backgroundColor: '#FAF9F2' }} className="min-h-screen flex items-center justify-center px-6">
+            <div style={{ border: '1px solid #e8e4d9', backgroundColor: '#FAF9F2' }} className="w-full max-w-xl rounded-3xl p-10 flex flex-col gap-8">
+
+                {/* Header */}
+                <div className="flex flex-col gap-2">
+                    <h1 style={{ color: '#1a1a1a' }} className="text-3xl font-light">
+                        Let's get to know you.
+                    </h1>
+                    <p style={{ color: '#9ca3af' }} className="text-sm font-light tracking-wide">
+                        Question {step + 1} of {visibleSteps.length}
+                    </p>
                 </div>
-                <div className="w-full h-2 bg-gray-100 rounded-full mb-6">
-                    <div className="h-full bg-blue-600 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+
+                {/* Progress bar */}
+                <div style={{ backgroundColor: '#e8e4d9' }} className="w-full h-1 rounded-full">
+                    <div
+                        style={{ backgroundColor: '#A50E06', width: `${progress}%` }}
+                        className="h-1 rounded-full transition-all duration-300"
+                    />
                 </div>
-                <Question step={current} value={currentValue} onChange={handleChange} />
-                <div className="flex justify-between mt-8">
+
+                {/* Question */}
+                <div className="flex flex-col gap-4">
+                    <Question step={current} value={currentValue} onChange={handleChange} />
+                </div>
+
+                {/* Navigation buttons */}
+                <div className="flex justify-between items-center pt-2">
                     <button
                         onClick={() => setStep((s) => s - 1)}
                         disabled={step === 0}
-                        className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-30"
+                        style={{ color: '#6b6b6b' }}
+                        className="text-sm font-light tracking-wide hover:opacity-50 transition-opacity disabled:opacity-20"
                     >
                         ← Back
                     </button>
                     <button
                         onClick={() => isLast ? handleSubmit() : setStep((s) => s + 1)}
                         disabled={!hasAnswer}
-                        className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 disabled:opacity-40"
+                        style={{ backgroundColor: '#A50E06', color: '#FAF9F2' }}
+                        className="px-8 py-3 rounded-2xl text-sm font-light tracking-widest uppercase hover:opacity-80 transition-opacity disabled:opacity-30"
                     >
                         {isLast ? "Submit" : "Next →"}
                     </button>
                 </div>
+
+                {/* Logout */}
                 <button
                     onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-                    className="mt-6 text-xs text-gray-400 underline"
+                    style={{ color: '#9ca3af' }}
+                    className="text-xs font-light tracking-wide hover:opacity-50 transition-opacity text-center"
                 >
                     Log out
                 </button>
+
             </div>
         </div>
     );

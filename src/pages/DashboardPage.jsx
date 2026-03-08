@@ -38,6 +38,7 @@ export default function DashboardPage() {
 
     return (
         <div className="flex flex-col gap-10">
+            {/* Welcome */}
             <div className="flex flex-col gap-3">
                 <h1 style={{ color: '#1a1a1a' }} className="text-6xl font-light leading-tight">
                     Welcome to {city},<br />{firstName}.
@@ -47,22 +48,29 @@ export default function DashboardPage() {
                 </p>
             </div>
 
-            <ArrivalScore tasks={tasks} />
+            {/* Score + buttons side by side */}
+            <div className="flex flex-row gap-8 items-start">
+                {/* Arrival Score — fixed width */}
+                <div className="w-96 flex-shrink-0">
+                    <ArrivalScore tasks={tasks} />
+                </div>
 
-            <div className="flex flex-row gap-4">
-                {features.map(f => (
-                    <button
-                        key={f.path}
-                        onClick={() => navigate(f.path)}
-                        style={{
-                            backgroundColor: '#A50E06',
-                            color: '#FAF9F2',
-                        }}
-                        className="px-10 py-5 rounded-2xl text-sm font-light tracking-widest uppercase hover:opacity-80 transition-all"
-                    >
-                        {f.title}
-                    </button>
-                ))}
+                {/* Feature buttons — stacked vertically beside score */}
+                <div className="flex flex-col gap-4 pt-2">
+                    {features.map(f => (
+                        <button
+                            key={f.path}
+                            onClick={() => navigate(f.path)}
+                            style={{
+                                backgroundColor: '#A50E06',
+                                color: '#FAF9F2',
+                            }}
+                            className="px-10 py-5 rounded-2xl text-sm font-light tracking-widest uppercase hover:opacity-80 transition-all"
+                        >
+                            {f.title}
+                        </button>
+                    ))}
+                </div>
             </div>
         </div>
     );

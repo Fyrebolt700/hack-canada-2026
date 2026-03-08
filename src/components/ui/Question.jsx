@@ -55,8 +55,8 @@ export default function Question({ step, value, onChange }) {
 
     const filtered = step.key === "language"
       ? step.options
-          .map((code) => ({ code, name: langs.where("1", code)?.name || code }))
-          .filter((l) => l.name.toLowerCase().includes(search.toLowerCase()))
+        .map((code) => ({ code, name: langs.where("1", code)?.name || code }))
+        .filter((l) => l.name.toLowerCase().includes(search.toLowerCase()))
       : step.options.filter((o) => o.toLowerCase().includes(search.toLowerCase()));
 
     const handleSelect = (option) => {
