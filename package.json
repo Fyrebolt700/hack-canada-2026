@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.15.0",
+    "@google/genai": "^1.44.0",
     "@react-google-maps/api": "^2.20.8",
     "firebase": "^12.10.0",
     "langs": "^2.0.0",
