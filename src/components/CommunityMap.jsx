@@ -32,11 +32,7 @@ function getCategoryFromQuery(query) {
     return "Healthcare";
   }
 
-  if (
-    q.includes("housing") ||
-    q.includes("settlement") ||
-    q.includes("newcomer")
-  ) {
+  if (q.includes("housing")) {
     return "Housing";
   }
 
@@ -54,6 +50,19 @@ function getCategoryFromQuery(query) {
     return "Food";
   }
 
+  if (
+    q.includes("library") ||
+    q.includes("community centre") ||
+    q.includes("daycare") ||
+    q.includes("childcare") ||
+    q.includes("settlement") ||
+    q.includes("newcomer") ||
+    q.includes("legal") ||
+    q.includes("immigration")
+  ) {
+    return "Personal Needs";
+  }
+
   return "Other";
 }
 
@@ -63,6 +72,7 @@ function getMarkerColor(categories) {
   if (categories.includes("Housing")) return "green";
   if (categories.includes("Worship")) return "purple";
   if (categories.includes("Food")) return "orange";
+  if (categories.includes("Personal Needs")) return "gray";
   return "gray";
 }
 
@@ -85,7 +95,8 @@ function getProfileChips(userData) {
   if (userData.nationality) chips.push(`From ${userData.nationality}`);
   if (userData.religion) chips.push(userData.religion);
   if (userData.purpose) chips.push(`Purpose: ${userData.purpose}`);
-  if (userData.needsDaycare) chips.push("Needs daycare");
+  if (userData.personal?.daycare) chips.push("Needs daycare");
+  if (userData.children) chips.push("Has children");
 
   return chips.slice(0, 4);
 }
@@ -96,13 +107,15 @@ function getRecommendedText(userData) {
   if (userData.nationality) items.push(`${userData.nationality} groceries`);
   if (userData.religion) items.push("places of worship");
 
-  if (Array.isArray(userData.needs)) {
-    if (userData.needs.includes("doctor")) items.push("healthcare");
-    if (userData.needs.includes("school")) items.push("schools");
-    if (userData.needs.includes("housing")) items.push("housing support");
-  }
+  if (userData.children) items.push("schools");
+  if (userData.personal?.daycare) items.push("daycare");
+  if (userData.housing) items.push("housing support");
+  if (userData.personal?.settlement) items.push("settlement services");
+  if (userData.personal?.legal) items.push("legal support");
 
-  if (userData.needsDaycare) items.push("daycare");
+  if (userData.purpose?.toLowerCase() === "study") {
+    items.push("student services");
+  }
 
   return [...new Set(items)];
 }
@@ -113,6 +126,7 @@ export default function CommunityMap({ userData }) {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [error, setError] = useState("");
   const [activeFilters, setActiveFilters] = useState([]);
+  const [showAllPlaces, setShowAllPlaces] = useState(false);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -171,6 +185,7 @@ export default function CommunityMap({ userData }) {
           ) {
             results.forEach((place) => {
               if (!place.place_id) return;
+              if (category === "Other") return;
 
               if (!placeMap.has(place.place_id)) {
                 placeMap.set(place.place_id, {
@@ -195,7 +210,14 @@ export default function CommunityMap({ userData }) {
     });
   }, [isLoaded, userLocation, queries]);
 
-  const filterOptions = ["Food", "Healthcare", "School", "Worship", "Housing"];
+  const filterOptions = [
+    "Food",
+    "Healthcare",
+    "School",
+    "Worship",
+    "Housing",
+    "Personal Needs",
+  ];
 
   const filteredPlaces = useMemo(() => {
     if (activeFilters.length === 0) return placesResults;
@@ -220,22 +242,24 @@ export default function CommunityMap({ userData }) {
 
     return counts;
   }, [placesResults]);
-
-  const topPlaces = filteredPlaces.slice(0, 5);
-
+  
+  const displayedPlaces = showAllPlaces
+  ? filteredPlaces
+  : filteredPlaces.slice(0, 5);  
+  
   if (!isLoaded) return <div>Loading Google Maps...</div>;
   if (error) return <div>{error}</div>;
   if (!userLocation) return <div>Getting your location...</div>;
 
-return (
-  <div
-    style={{
-      width: "100%",
-      maxWidth: "1400px",
-      margin: "0 auto",
-      color: "#111827",
-    }}
-  >
+  return (
+    <div
+      style={{
+        width: "100%",
+        maxWidth: "1400px",
+        margin: "0 auto",
+        color: "#111827",
+      }}
+    >
       <div style={{ marginBottom: "20px" }}>
         <h1 style={{ margin: "0 0 8px 0", fontSize: "32px", fontWeight: "700" }}>
           Your Settlement Map
@@ -300,6 +324,7 @@ return (
         <span>🔵 School</span>
         <span>🟣 Worship</span>
         <span>🟢 Housing</span>
+        <span>⚪ Personal Needs</span>
         <span>📍 You</span>
       </div>
 
@@ -333,20 +358,21 @@ return (
         center={userLocation}
         zoom={12}
       >
-     <Marker
-  position={userLocation}
-  title="You are here"
-  icon={{
-    url:
-      "data:image/svg+xml;charset=UTF-8," +
-      encodeURIComponent(`
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
-          <text x="24" y="30" text-anchor="middle" font-size="28">📍</text>
-        </svg>
-      `),
-    scaledSize: new window.google.maps.Size(40, 40),
-  }}
-/>
+        <Marker
+          position={userLocation}
+          title="You are here"
+          icon={{
+            url:
+              "data:image/svg+xml;charset=UTF-8," +
+              encodeURIComponent(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+                  <text x="24" y="30" text-anchor="middle" font-size="28">📍</text>
+                </svg>
+              `),
+            scaledSize: new window.google.maps.Size(40, 40),
+          }}
+        />
+
         {filteredPlaces.map((place) => {
           const lat = place.geometry?.location?.lat();
           const lng = place.geometry?.location?.lng();
@@ -413,11 +439,11 @@ return (
       <div style={{ marginTop: "24px" }}>
         <h2>Top places for you</h2>
 
-        {topPlaces.length === 0 ? (
+        {displayedPlaces.length === 0 ? (
           <p>No matching places found.</p>
         ) : (
           <ul style={{ paddingLeft: 0 }}>
-            {topPlaces.map((place) => (
+            {displayedPlaces.map((place) => (
               <li
                 key={place.place_id}
                 style={{
@@ -469,6 +495,23 @@ return (
               </li>
             ))}
           </ul>
+        )}
+        {filteredPlaces.length > 5 && (
+          <button
+            onClick={() => setShowAllPlaces(!showAllPlaces)}
+            style={{
+              marginTop: "12px",
+              padding: "8px 14px",
+              borderRadius: "10px",
+              border: "1px solid #d1d5db",
+              background: "#ffffff",
+              color: "#111827",
+              cursor: "pointer",
+              fontWeight: 600,
+            }}
+          >
+            {showAllPlaces ? "Show Top 5" : "Show All"}
+          </button>
         )}
       </div>
     </div>
