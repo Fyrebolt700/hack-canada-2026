@@ -1,6 +1,9 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useUserData } from "../hooks/useUserData";
+import { generateTasks } from "../data/checklistTasks";
+import ArrivalScore from "../components/ArrivalScore";
 
 const features = [
     { title: "Checklist", path: "/checklist" },
@@ -10,14 +13,38 @@ const features = [
 
 export default function DashboardPage() {
     const { user } = useAuth0();
-    const { userData } = useUserData();
     const navigate = useNavigate();
+    const [tasks, setTasks] = useState([]);
 
-    const city = userData?.city || "Canada";
+    const testUserData = {
+        name: "Suhaani",
+        nationality: "Indian",
+        province: "Ontario",
+        purpose: "study",
+        status: "temp_resident",
+        language: "en",
+        religion: "hinduism",
+        children: true,
+        childrenDetails: [{ level: "elementary" }],
+        housing: true,
+        personal: {
+            daycare: true,
+            nursing_homes: false,
+            settlement: true,
+            legal: true
+        }
+    };
+
+    useEffect(() => {
+        setTasks(generateTasks(testUserData));
+    }, []);
+
+    const city = testUserData?.province || "Canada";
     const firstName = user?.given_name || user?.name?.split(" ")[0] || "there";
 
     return (
-        <div className="flex flex-col items-center gap-12 text-center">
+        <div className="flex flex-col gap-10">
+            {/* Welcome */}
             <div className="flex flex-col gap-3">
                 <h1 style={{ color: '#1a1a1a' }} className="text-6xl font-light leading-tight">
                     Welcome to {city},<br />{firstName}.
@@ -27,6 +54,10 @@ export default function DashboardPage() {
                 </p>
             </div>
 
+            {/* Arrival Score — full width horizontal */}
+            <ArrivalScore tasks={tasks} />
+
+            {/* Feature buttons */}
             <div className="flex flex-row gap-4">
                 {features.map(f => (
                     <button
