@@ -10,14 +10,14 @@ export default function LandingPage() {
 
     useEffect(() => {
         const checkUser = async () => {
-            if (!isLoading && isAuthenticated) {
+            if (!isLoading && isAuthenticated && user) {
                 const snap = await getDoc(doc(db, "users", user.sub));
                 if (snap.exists()) navigate("/dashboard");
                 else navigate("/onboarding");
             }
         };
         checkUser();
-    }, [isAuthenticated, isLoading]);
+    }, [isAuthenticated, isLoading, user]);
 
     return (
         <div style={{ backgroundColor: '#FAF9F2' }} className="min-h-screen flex flex-col items-center justify-center px-6">
