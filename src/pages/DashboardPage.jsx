@@ -13,38 +13,23 @@ const features = [
 
 export default function DashboardPage() {
     const { user } = useAuth0();
+    const { userData, loading: userLoading } = useUserData();
     const navigate = useNavigate();
     const [tasks, setTasks] = useState([]);
 
-    const testUserData = {
-        name: "Suhaani",
-        nationality: "Indian",
-        province: "Ontario",
-        purpose: "study",
-        status: "temp_resident",
-        language: "en",
-        religion: "hinduism",
-        children: true,
-        childrenDetails: [{ level: "elementary" }],
-        housing: true,
-        personal: {
-            daycare: true,
-            nursing_homes: false,
-            settlement: true,
-            legal: true
-        }
-    };
-
     useEffect(() => {
-        setTasks(generateTasks(testUserData));
-    }, []);
+        if (userData) setTasks(generateTasks(userData));
+    }, [userData]);
 
-    const city = testUserData?.province || "Canada";
-    const firstName = user?.given_name || user?.name?.split(" ")[0] || "there";
+    const city = userData?.province || "Canada";
+    const firstName = userData?.name?.split(" ")[0] || user?.given_name || "there";
+
+    if (userLoading) return (
+        <p style={{ color: '#9ca3af' }} className="font-light">Loading...</p>
+    );
 
     return (
         <div className="flex flex-col gap-10">
-            {/* Welcome */}
             <div className="flex flex-col gap-3">
                 <h1 style={{ color: '#1a1a1a' }} className="text-6xl font-light leading-tight">
                     Welcome to {city},<br />{firstName}.
@@ -54,10 +39,8 @@ export default function DashboardPage() {
                 </p>
             </div>
 
-            {/* Arrival Score — full width horizontal */}
             <ArrivalScore tasks={tasks} />
 
-            {/* Feature buttons */}
             <div className="flex flex-row gap-4">
                 {features.map(f => (
                     <button

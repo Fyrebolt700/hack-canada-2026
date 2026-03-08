@@ -15,32 +15,12 @@ const CATEGORY_LABELS = {
 };
 
 export default function ChecklistPage() {
-    // TEMP: hardcoded test data until auth + quiz are ready
-    const userData = {
-        name: "Suhaani",
-        nationality: "Indian",
-        province: "Ontario",
-        purpose: "study",
-        status: "temp_resident",
-        language: "en",
-        religion: "hinduism",
-        children: true,
-        childrenDetails: [{ level: "elementary" }],
-        housing: true,
-        personal: {
-            daycare: true,
-            nursing_homes: false,
-            settlement: true,
-            legal: true
-        }
-    };
-    const loading = false;
-
+    const { userData, loading } = useUserData();
     const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
         if (userData) setTasks(generateTasks(userData));
-    }, []);
+    }, [userData]);
 
     const toggle = (id) => setTasks(prev =>
         prev.map(t => t.id === id ? { ...t, done: !t.done } : t)

@@ -13,6 +13,7 @@
     "@auth0/auth0-react": "^2.15.0",
     "@react-google-maps/api": "^2.20.8",
     "firebase": "^12.10.0",
+    "langs": "^2.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.1"

@@ -4,12 +4,16 @@ import { db } from "../firebase";
 import { useAuth0 } from "@auth0/auth0-react";
 
 export function useUserData() {
-    const { user, isAuthenticated } = useAuth0();
+    const { user, isAuthenticated, isLoading } = useAuth0();
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!isAuthenticated || !user) return;
+        if (isLoading) return;
+        if (!isAuthenticated || !user) {
+            setLoading(false);
+            return;
+        }
         const fetchData = async () => {
             const docRef = doc(db, "users", user.sub);
             const docSnap = await getDoc(docRef);
@@ -19,7 +23,7 @@ export function useUserData() {
             setLoading(false);
         };
         fetchData();
-    }, [isAuthenticated, user]);
+    }, [isAuthenticated, isLoading, user]);
 
     return { userData, loading };
 }

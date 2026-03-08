@@ -5,9 +5,9 @@ const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "hack-canada-2026.firebaseapp.com",
   projectId: "hack-canada-2026",
-  storageBucket: "hack-canada-2026.firebasestorage.app",
-  messagingSenderId: "613364990016",
-  appId: "1:613364990016:web:9a419cbc12b220feaa1fa5"
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);
