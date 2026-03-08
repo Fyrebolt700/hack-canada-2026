@@ -11,13 +11,27 @@ export const generateTasks = (userData) => {
 
     // URGENT
     tasks.push(
-        { id: "health_card", category: "Urgent", title: "Apply for Provincial Health Card", description: `Apply for OHIP or equivalent in ${userData.province}. Note there may be a waiting period.`, done: false },
+        {
+            id: "health_card", category: "Urgent", title: "Apply for Provincial Health Card", description: `Apply for ${userData.province === "Ontario" ? "OHIP" :
+                userData.province === "British Columbia" ? "BC Services Card (MSP)" :
+                    userData.province === "Alberta" ? "AHCIP" :
+                        userData.province === "Quebec" ? "RAMQ" :
+                            "your provincial health card"
+                } in ${userData.province}. Note there may be a waiting period.`, done: false
+        },
     );
 
     // FIRST WEEK
     tasks.push(
         { id: "bank", category: "First Week", title: "Open a Bank Account", description: "Bring your passport and proof of address. Most major banks have newcomer accounts.", done: false },
-        { id: "transit", category: "First Week", title: "Get a Transit Card", description: "Get a PRESTO card or local transit pass to get around the city.", done: false },
+        {
+            id: "transit", category: "First Week", title: "Get a Transit Card", description: `Get a ${userData.province === "Ontario" ? "PRESTO card" :
+                userData.province === "British Columbia" ? "Compass card" :
+                    userData.province === "Alberta" ? "UPass or local transit card" :
+                        userData.province === "Quebec" ? "OPUS card" :
+                            "local transit card"
+                } to get around the city.`, done: false
+        },
     );
 
     if (userData.purpose === "study") {

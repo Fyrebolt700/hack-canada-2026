@@ -58,7 +58,8 @@ export default function ArrivalScore({ tasks }) {
     return (
         <div
             style={{ border: '1px solid #e8e4d9', backgroundColor: '#FAF9F2' }}
-            className="rounded-3xl px-10 py-8 flex flex-row gap-12 items-center w-full"
+            className="rounded-3xl px-10 py-12 flex flex-row gap-12 items-center w-full"
+
         >
             {/* Left — gauge */}
             <div className="flex flex-col items-center flex-shrink-0">

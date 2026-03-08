@@ -6,7 +6,6 @@ import ProgressBar from "../components/ui/ProgressBar";
 import SectionHeader from "../components/ui/SectionHeader";
 
 const CATEGORY_ORDER = ["Urgent", "First Week", "First Month", "First 6 Months"];
-
 const CATEGORY_LABELS = {
     "Urgent": "Urgent — Day 1-2",
     "First Week": "First Week",
@@ -15,16 +14,27 @@ const CATEGORY_LABELS = {
 };
 
 export default function ChecklistPage() {
-    const { userData, loading } = useUserData();
+    const { userData, loading, saveCompletedTasks } = useUserData();
     const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
-        if (userData) setTasks(generateTasks(userData));
+        if (userData) {
+            const generated = generateTasks(userData);
+            const completedIds = userData.completedTasks || [];
+            const withCompletion = generated.map(t => ({
+                ...t,
+                done: completedIds.includes(t.id)
+            }));
+            setTasks(withCompletion);
+        }
     }, [userData]);
 
-    const toggle = (id) => setTasks(prev =>
-        prev.map(t => t.id === id ? { ...t, done: !t.done } : t)
-    );
+    const toggle = async (id) => {
+        const updated = tasks.map(t => t.id === id ? { ...t, done: !t.done } : t);
+        setTasks(updated);
+        const completedIds = updated.filter(t => t.done).map(t => t.id);
+        await saveCompletedTasks(completedIds);
+    };
 
     const completed = tasks.filter(t => t.done).length;
 

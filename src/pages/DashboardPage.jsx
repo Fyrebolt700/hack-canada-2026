@@ -18,7 +18,15 @@ export default function DashboardPage() {
     const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
-        if (userData) setTasks(generateTasks(userData));
+        if (userData) {
+            const generated = generateTasks(userData);
+            const completedIds = userData.completedTasks || [];
+            const withCompletion = generated.map(t => ({
+                ...t,
+                done: completedIds.includes(t.id)
+            }));
+            setTasks(withCompletion);
+        }
     }, [userData]);
 
     const city = userData?.province || "Canada";
