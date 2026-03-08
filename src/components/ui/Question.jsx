@@ -5,17 +5,20 @@ const formatLabel = (str) =>
   str.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
 export default function Question({ step, value, onChange }) {
+  const [search, setSearch] = useState("");
+
   if (!step) return null;
 
   if (step.type === "text") {
     return (
-      <div>
-        <p className="text-lg font-semibold text-gray-800 mb-4">{step.question}</p>
+      <div className="flex flex-col gap-3">
+        <p style={{ color: '#1a1a1a' }} className="text-lg font-light">{step.question}</p>
         <input
           type="text"
           value={value || ""}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#A50E06]"
+          style={{ border: '1px solid #e8e4d9', backgroundColor: '#FAF9F2', color: '#1a1a1a' }}
+          className="w-full rounded-2xl px-4 py-3 text-sm font-light focus:outline-none"
           placeholder="Type your answer..."
         />
       </div>
@@ -24,18 +27,20 @@ export default function Question({ step, value, onChange }) {
 
   if (step.type === "boolean") {
     return (
-      <div>
-        <p className="text-lg font-semibold text-gray-800 mb-4">{step.question}</p>
+      <div className="flex flex-col gap-4">
+        <p style={{ color: '#1a1a1a' }} className="text-lg font-light">{step.question}</p>
         <div className="flex gap-4">
           {[true, false].map((option) => (
             <button
               key={String(option)}
               type="button"
               onClick={() => onChange(option)}
-              className={`px-6 py-3 rounded-xl border-2 text-sm font-medium transition-all
-                ${value === option
-                  ? "border-blue-600 text-[#A50E06] text-blue-700"
-                  : "border-gray-200 bg-white text-gray-700 hover:border-[#A50E06]"}`}
+              style={{
+                border: `1px solid ${value === option ? '#A50E06' : '#e8e4d9'}`,
+                color: value === option ? '#A50E06' : '#6b6b6b',
+                backgroundColor: '#FAF9F2',
+              }}
+              className="px-8 py-3 rounded-2xl text-sm font-light tracking-wide transition-all hover:border-red-800"
             >
               {option ? "Yes" : "No"}
             </button>
@@ -45,18 +50,14 @@ export default function Question({ step, value, onChange }) {
     );
   }
 
-if (step.type === "select" || step.type === "multiselect") {
+  if (step.type === "select" || step.type === "multiselect") {
     const isMulti = step.type === "multiselect";
-    const isSearchable = true;
-    const [search, setSearch] = useState("");
 
-    const filtered = isSearchable
-    ? step.key === "language"
-        ? step.options
-            .map((code) => ({ code, name: langs.where("1", code)?.name || code }))
-            .filter((l) => l.name.toLowerCase().includes(search.toLowerCase()))
-        : step.options.filter((o) => o.toLowerCase().includes(search.toLowerCase()))
-    : step.options;
+    const filtered = step.key === "language"
+      ? step.options
+          .map((code) => ({ code, name: langs.where("1", code)?.name || code }))
+          .filter((l) => l.name.toLowerCase().includes(search.toLowerCase()))
+      : step.options.filter((o) => o.toLowerCase().includes(search.toLowerCase()));
 
     const handleSelect = (option) => {
       if (isMulti) {
@@ -67,46 +68,53 @@ if (step.type === "select" || step.type === "multiselect") {
         onChange(updated);
       } else {
         onChange(option);
+        setSearch(""); // clear search on selection for single select
       }
     };
+
     const isSelected = (option) =>
       isMulti ? Array.isArray(value) && value.includes(option) : value === option;
 
     return (
-      <div>
-        <p className="text-lg font-semibold text-gray-800 mb-4">{step.question}</p>
-        
+      <div className="flex flex-col gap-3">
+        <p style={{ color: '#1a1a1a' }} className="text-lg font-light">{step.question}</p>
 
-        {isSearchable && (
-            <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search..."
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm mb-3 focus:outline-none focus:border-[#A50E06] "
-            />
-            )}
-            <div className="grid grid-cols-2 gap-3 max-h-64 overflow-y-auto">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search..."
+          style={{ border: '1px solid #e8e4d9', backgroundColor: '#FAF9F2', color: '#1a1a1a' }}
+          className="w-full rounded-2xl px-4 py-3 text-sm font-light focus:outline-none"
+        />
 
-            {filtered.map((option) => {
-                const display = step.key === "language" ? option.name : formatLabel(option);
-                const value = step.key === "language" ? option.code : option;
-                return (
-                    <button
-                    key={value}
-                    type="button"
-                    onClick={() => handleSelect(value)}
-                    className={`px-4 py-3 rounded-xl border-2 text-left text-sm font-medium transition-all
-                        ${isSelected(value)
-                        ? "border-[#A50E06] text-[#A50E06] text-blue-700"
-                        : "border-gray-200 bg-white text-gray-700 hover:border-[#A50E06]"}`}
-                    >
-                    {display}
-                    </button>
-                );
-            })}
+        <div className="grid grid-cols-2 gap-3 max-h-64 overflow-y-auto">
+          {filtered.map((option) => {
+            const display = step.key === "language" ? option.name : formatLabel(option);
+            const val = step.key === "language" ? option.code : option;
+            return (
+              <button
+                key={val}
+                type="button"
+                onClick={() => handleSelect(val)}
+                style={{
+                  border: `1px solid ${isSelected(val) ? '#A50E06' : '#e8e4d9'}`,
+                  color: isSelected(val) ? '#A50E06' : '#6b6b6b',
+                  backgroundColor: '#FAF9F2',
+                }}
+                className="px-4 py-3 rounded-2xl text-left text-sm font-light transition-all hover:border-red-800"
+              >
+                {display}
+              </button>
+            );
+          })}
         </div>
-        {isMulti && <p className="text-xs text-gray-400 mt-2">Select all that apply</p>}
+
+        {isMulti && (
+          <p style={{ color: '#9ca3af' }} className="text-xs font-light tracking-wide">
+            Select all that apply
+          </p>
+        )}
       </div>
     );
   }
