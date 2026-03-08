@@ -1,7 +1,31 @@
+import { useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useNavigate } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 export default function LandingPage() {
-    const { loginWithRedirect } = useAuth0();
+    const { loginWithRedirect, isAuthenticated, isLoading, user } = useAuth0();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const checkUser = async () => {
+            if (!isLoading && isAuthenticated) {
+                console.log("user.sub:", user.sub);
+                const ref = doc(db, "users", user.sub);
+                const snap = await getDoc(ref);
+                console.log("snap.exists:", snap.exists());
+                if (snap.exists()) {
+                    navigate("/dashboard");
+                } else {
+                    navigate("/onboarding");
+                }
+            }
+        };
+        checkUser();
+    }, [isAuthenticated, isLoading]);
+
+    if (isLoading || isAuthenticated) return null;
 
     return (
         <div style={{ backgroundColor: '#FAF9F2' }} className="min-h-screen flex flex-col items-center justify-center px-6">

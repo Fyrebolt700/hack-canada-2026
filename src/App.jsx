@@ -9,7 +9,6 @@ import OnboardingPage from "./pages/OnboardingPage";
 
 export default function App() {
   return (
-    <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
@@ -20,6 +19,5 @@ export default function App() {
           <Route path="/map" element={<MapPage />} />
         </Route>
       </Routes>
-    </BrowserRouter>
   );
 }
